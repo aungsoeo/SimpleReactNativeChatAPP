@@ -1,5 +1,5 @@
 # SimpleReactNativeChatAPP
-clone this repository git clone https://github.com/aungsoeo/ReactNativeSocketIO.git
+clone this repository git clone https://github.com/aungsoeo/SimpleReactNativeChatAPP.git
 
 npm install
 
