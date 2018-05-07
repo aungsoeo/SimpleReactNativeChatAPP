@@ -1,0 +1,28 @@
+https://github.com/hoadv/employee-mgmt-laravel5.4-adminlte.git
+
+--How To Create an Authentication System and a Persistent User Session with React Native
+https://blog.theodo.fr/2017/03/how-to-create-an-authentication-system-and-a-persistent-user-session-with-react-native/
+----------------------------------------------------------------------------------------------------------------------
+Import and Export Excel and CSV in Laravel 5 Using maatwebsite
+	http://learninfinity.info/import-and-export-excel-and-csv-in-laravel-5-using-maatwebsite/
+---=--------------------------------------------------------------------------------------------------------------------------------
+
+Chat APP sample link
+
+https://gist.github.com/dskanth/2634239
+
+https://socket.io/get-started/chat/
+
+https://itnext.io/building-a-node-js-websocket-chat-app-with-socket-io-and-react-473a0686d1e1
+
+https://medium.freecodecamp.org/building-a-chat-application-with-mean-stack-637254d1136d
+https://github.com/sudheeshshetty/Chat
+
+https://medium.com/dailyjs/real-time-apps-with-typescript-integrating-web-sockets-node-angular-e2b57cbd1ec1
+
+https://tutorialzine.com/2014/03/nodejs-private-webchat
+
+http://www.codershood.info/2015/12/10/showing-online-users-using-nodejs-socket-io/
+
+https://github.com/systenics/ChatRoom/blob/master/public/index.html
+http://chat.systenics.com/#/v1/ChatRoom
