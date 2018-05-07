@@ -15,7 +15,7 @@ import {
   TouchableOpacity
 } from 'react-native';
 
-import { GiftedChat } from 'react-native-gifted-chat';
+// import { GiftedChat } from 'react-native-gifted-chat';
 
 import SocketIOClient from 'socket.io-client';
 var $this;
@@ -24,63 +24,74 @@ export default class App extends Component {
     super(props);
     this.socket = SocketIOClient('http://192.168.211.174:3000');
     $this = this;
-    this.socket.on('update', function (data) {   
-      $this.onReceive(data);
+    this.socket.on('update', function (data) {
+      console.log(data);      
+      $this.setState({
+        "name":data.name,
+        "datatext": data.msg
+      });
     });
     this.state = {
+      "name" : "UnKnown",
+      "datatext": "No Message",
       messages: []
     }
   }
-  componentWillMount() {
-    this.setState({
-      messages: [
-        {
-          _id: 1,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://facebook.github.io/react/img/logo_og.png',
-          },
-        },
-      ],
-    })
+  componentDidMount(){
+    
   }
-  onReceive(text) {
-    this.setState((previousState) => {
-      return {
-        messages: GiftedChat.append(previousState.messages, {
-          _id: Math.round(Math.random() * 1000000),
-          text: text.msg,
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://facebook.github.io/react/img/logo_og.png',
-          },
-        }),
-      };
-    });
-  }  
-  
-  onSend(messages = []) {
-    this.socket.emit('client', {'id':1,"name":"ASO", 'msg':messages[0].text});
-    this.setState(previousState => ({
-      messages: GiftedChat.append(previousState.messages, messages),
-    }))
+  // _SendToServer(){
+  //   alert("hi");
+  //   this.socket.emit('client', {'id':2, 'name':Math.random().toString(36).substr(2, 5)+' come from client'});
+  // }
+  handleSubmit(event) {
+    this.socket.emit('client', {'id':1,"name":"ASO", 'msg':event.nativeEvent.text});
   }
-
   render() {
+    // var user = { _id: this.state.userId || -1 };
+
     return (
-      <GiftedChat
-        messages={this.state.messages}
-        onSend={messages => this.onSend(messages)}
-        user={{
-          _id: 1,
-        }}
-      />
-    )
+      <View style={styles.container}>
+        <Text>{this.state.name}: {this.state.datatext}</Text>
+        
+          <TextInput
+            ref='textInput'
+            autoCapitalize='none'
+            placeholder='Enter a chat message...'
+            returnKeyType='send'
+            style={{height: 40, borderColor: 'gray', borderWidth: 1, margin: 10}}
+            onSubmitEditing={this.handleSubmit.bind(this)}
+          />
+          <ScrollView style={{height: 400}}>
+            {
+              this.state.messages.map(m => {
+                return <Text style={{margin: 10}}>{m}</Text>
+              })
+            }
+          </ScrollView>
+      </View>
+      // <GiftedChat
+      //       messages={this.state.messages}
+      //       onSend={this.onSend}
+      //       user={user}
+      // />
+    );
   }
 }
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F5FCFF',
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+  },
+  instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+  },
+});
