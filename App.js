@@ -16,6 +16,7 @@ export default class Example extends React.Component {
     super(props);
     this.socket = SocketIOClient('http://192.168.211.174:3000');
     $this = this;
+    this.socket.emit('online',[{'id':2,"username":"ASO"}]);
     this.socket.on('update', function (data) {   
       $this.onReceive(data);
     });

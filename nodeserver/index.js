@@ -19,5 +19,10 @@ io.on('connection', function (socket) {
     socket.on('client', (data)=>{
         console.log('updated from client');
         io.emit('client', data);
-    })
+    });
+
+    socket.on('online', (data)=>{
+        console.log('online user'+data);
+        io.emit('online', data);
+    });
 });
