@@ -59,8 +59,18 @@
             var socket = io.connect();
             var button =  document.querySelector('button');
             button.onclick = function(){
-                console.log('work');
-                socket.emit('update', {'id':1, 'name':"server","msg": $('#message').val()});
+				console.log('work');
+				$chat.append('<div class="well"><strong>'+"Admin"+'</strong>:'+$('#message').val()+'</div>');
+				socket.emit('update',
+									{
+										_id: Math.round(Math.random() * 1000000),
+										text: $('#message').val(),
+										createdAt: new Date(Date.UTC(2016, 7, 30, 17, 20, 0)),
+										user: {
+										_id: 2,
+										name: 'Admin',
+									},
+								});
                 $('#message').val('');
             }
             socket.on('client', (data)=>{
