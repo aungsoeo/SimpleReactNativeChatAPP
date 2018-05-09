@@ -7,8 +7,8 @@ import {
 } from 'react-native';
 
 import {GiftedChat, Actions, Bubble, SystemMessage} from 'react-native-gifted-chat';
-import CustomActions from './CustomActions';
-import CustomView from './CustomView';
+// import CustomActions from './CustomActions';
+// import CustomView from './CustomView';
 import SocketIOClient from 'socket.io-client';
 var $this;
 export default class Example extends React.Component {
@@ -16,7 +16,7 @@ export default class Example extends React.Component {
     super(props);
     this.socket = SocketIOClient('http://192.168.211.174:3000');
     $this = this;
-    this.socket.emit('online',[{'id':2,"username":"ASO"}]);
+    this.socket.emit('online',{'id':2,"username":"HHA"});
     this.socket.on('update', function (data) {   
       $this.onReceive(data);
     });
@@ -29,7 +29,7 @@ export default class Example extends React.Component {
 
     this._isMounted = false;
     this.onSend = this.onSend.bind(this);
-    this.renderCustomActions = this.renderCustomActions.bind(this);
+    // this.renderCustomActions = this.renderCustomActions.bind(this);
     this.renderBubble = this.renderBubble.bind(this);
     this.renderSystemMessage = this.renderSystemMessage.bind(this);
     this.renderFooter = this.renderFooter.bind(this);
@@ -80,7 +80,7 @@ export default class Example extends React.Component {
   }
 
   onSend(messages = []) {  // send user text msg to server , need to save with api
-    this.socket.emit('client', {'id':1,"name":"ASO", 'msg':messages[0].text});
+    this.socket.emit('client', {'id':2,"name":"HHA", 'msg':messages[0].text});
     this.setState((previousState) => {
       return {
         messages: GiftedChat.append(previousState.messages, messages),
@@ -89,48 +89,50 @@ export default class Example extends React.Component {
   }
 
   onReceive(data) {  //receive txt msg from server , show typing... need to modify with new socket
-    var msg = data.text;
-    if (msg.length > 0) {
-        this.setState((previousState) => {
-          return {
-            typingText: 'Server  is typing...'
-          };
-        });
-    }
-    setTimeout(() => {
-      this.setState((previousState) => {
-        return {
-          messages: GiftedChat.append(previousState.messages,data),
-          typingText: null,
-          }
-      });
-    }, 1000);
+    if(data.to_userID ==2){ 
+        var msg = data.text;
+        if (msg.length > 0) {
+            this.setState((previousState) => {
+              return {
+                typingText: 'Server  is typing...'
+              };
+            });
+        }
+        setTimeout(() => {
+          this.setState((previousState) => {
+            return {
+              messages: GiftedChat.append(previousState.messages,data),
+              typingText: null,
+              }
+          });
+        }, 1000);
+      }
   } 
 
-  renderCustomActions(props) {
-    if (Platform.OS === 'ios') {
-      return (
-        <CustomActions
-          {...props}
-        />
-      );
-    }
-    const options = {
-      'Action 1': (props) => {
-        alert('option 1');
-      },
-      'Action 2': (props) => {
-        alert('option 2');
-      },
-      'Cancel': () => {},
-    };
-    return (
-      <Actions
-        {...props}
-        options={options}
-      />
-    );
-  }
+  // renderCustomActions(props) {
+  //   if (Platform.OS === 'ios') {
+  //     return (
+  //       <CustomActions
+  //         {...props}
+  //       />
+  //     );
+  //   }
+  //   const options = {
+  //     'Action 1': (props) => {
+  //       alert('option 1');
+  //     },
+  //     'Action 2': (props) => {
+  //       alert('option 2');
+  //     },
+  //     'Cancel': () => {},
+  //   };
+  //   return (
+  //     <Actions
+  //       {...props}
+  //       options={options}
+  //     />
+  //   );
+  // }
 
   renderBubble(props) {  // show bubble user name
     return (
@@ -159,13 +161,13 @@ export default class Example extends React.Component {
     );
   }
 
-  renderCustomView(props) {  // for map
-    return (
-      <CustomView
-        {...props}
-      />
-    );
-  }
+  // renderCustomView(props) {  // for map
+  //   return (
+  //     <CustomView
+  //       {...props}
+  //     />
+  //   );
+  // }
 
   renderFooter(props) {  //for showing "Someone is typeing..."
     if (this.state.typingText) {
@@ -193,10 +195,10 @@ export default class Example extends React.Component {
           _id: 1, // sent messages should have same user._id
         }}
 
-        renderActions={this.renderCustomActions}
+        // renderActions={this.renderCustomActions}
         renderBubble={this.renderBubble}
         renderSystemMessage={this.renderSystemMessage}
-        renderCustomView={this.renderCustomView}
+        // renderCustomView={this.renderCustomView}
         renderFooter={this.renderFooter}
       />
     );

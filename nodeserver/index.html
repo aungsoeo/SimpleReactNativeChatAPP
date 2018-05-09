@@ -4,67 +4,152 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>IO Chat</title>
-	 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script src="/socket.io/socket.io.js"></script>
 	<style>
 		body{
 			margin-top:30px;
 		}
-		#messageArea{
+		.box-header.with-border {
+			border-bottom: 1px solid #f4f4f4;
+		}
+
+		.box-header {
+			color: #444;
 			display: block;
+			padding: 10px;
+			position: relative;
+		}
+		
+		.box.box-primary {
+			border-top-color: #3c8dbc;
+		}
+
+		.box {
+			position: relative;
+			border-radius: 3px;
+			background: #ffffff;
+			border-top: 3px solid #d2d6de;
+			margin-bottom: 20px;
+			width: 100%;
+			box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+		}
+		.direct-chat-msg {
+			margin-bottom: 10px;
+		}
+
+		.direct-chat-msg, .direct-chat-text {
+			display: block;
+		}
+		.direct-chat-text {
+			border-radius: 5px;
+			position: relative;
+			padding: 5px 10px;
+			background: #d2d6de;
+			border: 1px solid #d2d6de;
+			margin: 5px 10px 0 10px;
+			color: #444;
+		}
+		.direct-chat-primary .right>.direct-chat-text {
+			background: #3c8dbc;
+			border-color: #3c8dbc;
+			color: #fff;
+		}
+		.direct-chat-user-text{
+			border-radius: 5px;
+			position: relative;
+			padding: 5px 10px;
+			border: 1px solid #d2d6de;
+			margin: 5px 10px 0 10px;
+			background: #d2d6de;
+			border-color: #d2d6de;
+			color: #444;
 		}
 	</style>
 </head>
 <body>
 	<div class="container">
-		<!-- <div id="userFormArea" class="row">
-			<div class="col-md-12">
-				<form id="userForm">
-					<div class="form-group">
-						<label >Enter Username</label>
-						<input class="form-control" type="text" id="username">
-						<input type="submit" class="btn btn-primary" value="Login">
+			<nav class="navbar navbar-dark bg-primary">
+					<div class="container-fluid text-center">  
+						<h1>Live Chat Admin Panel</h1>
 					</div>
-				</form>
-			</div>
-		</div> -->
-		<div id="messageArea" class="row">
-			<div class="col-md-4">
-				<div class="well">
-					<h3>Online user</h3>
-					<ul class="list-group" id="users">
-					</ul>
+				</nav>
+				<div class="hold-transition skin-blue sidebar-mini">
+				
+					<!-- /.box -->
+					<div class="row">
+						<div class="col-md-8 pull-left">
+							<div class="box box-primary direct-chat direct-chat-primary">
+								<div class="box-header with-border">
+									<h3 class="box-title">Chat Box</h3>
+								</div>
+								<div class="box-body">
+									<!-- Conversations are loaded here -->
+									<div class="chat-messages" id="group">
+											
+										
+									</div>
+									<div id="typing"></div>
+								</div>
+								<br>
+								<div class="box-footer" style="margin-top: 50px;">
+									<div>
+										<div class="input-group">
+											<input type="text" id="message" name="message" placeholder="Type Message ..." class="form-control" >
+											<span class="input-group-btn">
+												<button type="button" class="btn btn-primary btn-flat" >Send</button>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+				
+						<div class="col-md-3 pull-right">
+							<!-- USERS LIST -->
+							<div class="box box-primary">
+								<div class="box-header with-border">
+									<div>
+										<h3 class="box-title">Online Users<span class="label label-danger pull-right">1</span></h3>
+									</div>
+								</div>
+								<!-- /.box-header -->
+								<div class="box-body direct-chat-messages">
+									<ul class="list-group clearfix" id="users">
+
+									</ul>
+									<!-- /.users-list -->
+								</div>
+							</div>
+							<!--/.box -->
+						</div>
+						<!-- /.col -->
+				
+					</div>
+					<!-- /.row -->
+					<!-- Modal -->
 				</div>
-						
-			</div>
-			<div class="col-md-8">
-				<div class="chat" id="chat">
 					
-				</div>
-				<form id="messageForm">
-					<div class="form-group">
-						<label>Enter Message</label>
-						<textarea class="form-control" id="message"></textarea>
-						<br>
-                        <button class="btn btn-primary">Send Message</button>
-					</div>
-				</form>
-			</div>		
         </div>
         
 	</div>
 	<script>
+		var selecteduserid = "";
 		$(function(){
             var socket = io.connect();
             var button =  document.querySelector('button');
             button.onclick = function(){
 				console.log('work');
-				$chat.append('<div class="well"><strong>'+"Admin"+'</strong>:'+$('#message').val()+'</div>');
+				if ($('#message').val()=='') {
+					return false;
+				}
+				$('.chat-messages').append('<div style="padding:20px;"><div class="direct-chat-box right"><div class="direct-chat-info clearfix"><span class="direct-chat-name pull-right"><strong>Admin</strong></span><br><span class="direct-chat-timestamp pull-right">May 8, 3:22 PM</span></div><div class="direct-chat-text pull-right">'+$('#message').val()+'</div></div></div>');
 				socket.emit('update',
 									{
 										_id: Math.round(Math.random() * 1000000),
 										text: $('#message').val(),
+										to_userID:selecteduserid,
 										createdAt: new Date(Date.UTC(2016, 7, 30, 17, 20, 0)),
 										user: {
 										_id: 2,
@@ -74,7 +159,15 @@
                 $('#message').val('');
             }
             socket.on('client', (data)=>{
-                $chat.append('<div class="well"><strong>'+data.name+'</strong>:'+data.msg+'</div>');
+				// show sms by user id
+				if(selecteduserid==data.id){
+					$('#typing').append('<div><span class="typing_text">'+data.name+' is typging..... </span></div>');
+					setTimeout(function(){
+						$('.chat-messages').append('<div><div class="direct-chat-msg right"><div class="direct-chat-info clearfix"><span class="direct-chat-name pull-left"><strong>'+data.name+'</strong></span></div><div class="direct-chat-user-text pull-left">'+data.msg+'</div></div></div>');
+						$('.typing_text').fadeOut('slow');
+					},1000)
+				}
+				
             })
 
 			
@@ -90,28 +183,21 @@
 				socket.emit('send message', $message.val());
 				$message.val('');
 			});
-			// socket.on('new message', function(data){
-			// 	$chat.append('<div class="well"><strong>'+data.user+'</strong>:'+data.msg+'</div>');
-			// });
-			// $('#userFormArea').submit(function(e){
-			// 	e.preventDefault();
-			// 	socket.emit('new user', $('#username').val(),function(data){
-			// 		if(data){
-			// 			$('#userFormArea').hide();
-			// 			$('#messageArea').show();
-			// 		}
-			// 	});
-			// 	$message.val('');
-			// });
-			socket.on('online', function(data){
+
+			socket.on('get users', function(data){
+				console.log(data);
 				console.log(data.length);
 				var html = '';
 				for(i=0;i<data.length;i++){
-					html += '<li class="list-group-item">'+data[i].username+'</li>';
+					html += '<li onclick="setUser('+data[i].id+')" class="list-group-item"><span style="padding:10px;"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnLu5A52scQ_hiK_8cZaUsY85JdhKbaTX5dv8WMkH9d3pw8ZCz" alt="active" width="20px" height="20px"></span>'+data[i].username+'</li>';
 				}
 				$('#users').html(html);
 			});
 		});
+
+		function setUser(id){
+			selecteduserid = id;
+		}
 	</script>
 </body> 
 </html> 
