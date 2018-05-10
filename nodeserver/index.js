@@ -13,17 +13,22 @@ app.get('/', function (req, res) {
 });
 
 io.on('connection', function (socket) {
-
     connections.push(socket);
     console.log('Connected : %s sockets conected', connections.length);
     
+    socket.on('createConnection', () =>
+    {
+        socket.emit('connectionResponse',socket.id);
+    });
+
     //Disconnect
     socket.on('disconnect', function(data){
-        if(!socket.username) return;
         users.splice(users.indexOf(socket.username),1);
         updateUsernames();
         connections.splice(connections.indexOf(socket, 1));
-        console.log('Disconnected: %s sockets connected', connections.lentgth);
+        console.log(socket.username+'Disconnected');
+        socket.disconnect(); // Disconnect the Socket
+        console.log('Connected : %s sockets conected', connections.length);
     });
 
     socket.on('update',(data)=>{

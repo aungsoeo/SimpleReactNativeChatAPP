@@ -35,7 +35,7 @@
 			width: 100%;
 			box-shadow: 0 1px 1px rgba(0,0,0,0.1);
 		}
-		.direct-chat-msg {
+		.chat-messages {
 			margin-bottom: 10px;
 		}
 
@@ -87,7 +87,7 @@
 								<div class="box-body">
 									<!-- Conversations are loaded here -->
 									<div class="chat-messages" id="group">
-											
+										<span class="chat_with_user" style="margin: 10px 0 0 20px;"></span>	
 										
 									</div>
 									<div id="typing"></div>
@@ -111,7 +111,7 @@
 							<div class="box box-primary">
 								<div class="box-header with-border">
 									<div>
-										<h3 class="box-title">Online Users<span class="label label-danger pull-right">1</span></h3>
+										<h3 class="box-title">Online Users<span class="label label-danger pull-right no_of_online_user">0</span></h3>
 									</div>
 								</div>
 								<!-- /.box-header -->
@@ -144,7 +144,7 @@
 				if ($('#message').val()=='') {
 					return false;
 				}
-				$('.chat-messages').append('<div style="padding:20px;"><div class="direct-chat-box right"><div class="direct-chat-info clearfix"><span class="direct-chat-name pull-right"><strong>Admin</strong></span><br><span class="direct-chat-timestamp pull-right">May 8, 3:22 PM</span></div><div class="direct-chat-text pull-right">'+$('#message').val()+'</div></div></div>');
+				$('.chat-messages').append('<div class="server_msg" style="padding:20px;"><div class="direct-chat-box right"><div class="direct-chat-info clearfix"><span class="direct-chat-name pull-right"><strong>Admin</strong></span><br><span class="direct-chat-timestamp pull-right">May 8, 3:22 PM</span></div><div class="direct-chat-text pull-right">'+$('#message').val()+'</div></div></div>');
 				socket.emit('update',
 									{
 										_id: Math.round(Math.random() * 1000000),
@@ -163,7 +163,7 @@
 				if(selecteduserid==data.id){
 					$('#typing').append('<div><span class="typing_text">'+data.name+' is typging..... </span></div>');
 					setTimeout(function(){
-						$('.chat-messages').append('<div><div class="direct-chat-msg right"><div class="direct-chat-info clearfix"><span class="direct-chat-name pull-left"><strong>'+data.name+'</strong></span></div><div class="direct-chat-user-text pull-left">'+data.msg+'</div></div></div>');
+						$('.chat-messages').append('<div class="client_msg" style="padding:20px;"><div class="direct-chat-msg right"><div class="direct-chat-info clearfix"><span class="direct-chat-name pull-left"><strong>'+data.name+'</strong></span></div><div class="direct-chat-user-text pull-left">'+data.msg+'</div></div></div>');
 						$('.typing_text').fadeOut('slow');
 					},1000)
 				}
@@ -185,18 +185,28 @@
 			});
 
 			socket.on('get users', function(data){
-				console.log(data);
-				console.log(data.length);
+				$('.no_of_online_user').text(data.length);
 				var html = '';
 				for(i=0;i<data.length;i++){
-					html += '<li onclick="setUser('+data[i].id+')" class="list-group-item"><span style="padding:10px;"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnLu5A52scQ_hiK_8cZaUsY85JdhKbaTX5dv8WMkH9d3pw8ZCz" alt="active" width="20px" height="20px"></span>'+data[i].username+'</li>';
+					html += '<li onclick="setUser('+data[i].id+')" class="list-group-item user_li"><span style="padding:10px;"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQnLu5A52scQ_hiK_8cZaUsY85JdhKbaTX5dv8WMkH9d3pw8ZCz" alt="active" width="20px" height="20px"></span>'+data[i].username+'</li>';
 				}
 				$('#users').html(html);
 			});
 		});
 
 		function setUser(id){
-			selecteduserid = id;
+			if(selecteduserid != id){
+				selecteduserid = id;
+				$('.chat_with_user').text('You are now chating with ' + id);
+				$('.chat-messages').find('.client_msg').each(function() {
+						$(".client_msg").remove();
+					}
+				);
+				$('.chat-messages').find('.server_msg').each(function() {
+						$('.server_msg').remove();
+					}
+				);
+			}		
 		}
 	</script>
 </body> 
