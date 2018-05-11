@@ -137,7 +137,7 @@
 	<script>
 		var selecteduserid = "";
 		$(function(){
-            var socket = io.connect();
+			var socket = io.connect();
             var button =  document.querySelector('button');
             button.onclick = function(){
 				console.log('work');
@@ -156,6 +156,26 @@
 										name: 'Admin',
 									},
 								});
+								
+				$.ajax({  // save message from server
+					method: 'POST',
+					url: "http://192.168.211.130:8121/umbraco/api/Customer/SaveMessage",
+					dataType: "json",
+					data: { 
+						"sent_user_id":0,
+						"receive_user_id":selecteduserid,
+						"msg": $('#message').val(),
+					 },
+					success:function(data){
+						// alert("success");
+						console.log(data);
+					},
+					error:function(){
+						// alert("error");
+						console.log('error in saving!')
+					},
+					
+				});
                 $('#message').val('');
             }
             socket.on('client', (data)=>{
